@@ -32,7 +32,15 @@ const createProduct = async (req, res) => {
 const getProducts = async (req, res) => {
   try {
     const products = await Product.find();
-    res.json(products);
+
+    // Modificar cada producto para agregar la URL completa de la imagen
+    const updatedProducts = products.map((product) => ({
+      ...product._doc,
+      image: `${req.protocol}://${req.get("host")}/${product.image}`,
+      // Esto genera algo como: http://localhost:5000/uploads/167253123123-foto.jpg
+    }));
+
+    res.json(updatedProducts);
   } catch (error) {
     res.status(500).json({ message: "Error al obtener productos", error });
   }
